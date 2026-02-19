@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 
-const CARDS = [
+type Card = { name: string; arcana: string; suit?: string; meaning: string };
+
+const CARDS: Card[] = [
   { name: "The Fool", arcana: "Major", meaning: "New beginnings, spontaneity, a leap into the unknown, naivety, free spirit" },
   { name: "The Magician", arcana: "Major", meaning: "Willpower, skill, resourcefulness, taking action, manifestation" },
   { name: "The High Priestess", arcana: "Major", meaning: "Intuition, mystery, inner knowledge, the subconscious, patience" },
@@ -81,105 +83,22 @@ const CARDS = [
   { name: "King of Pentacles", arcana: "Minor", suit: "Pentacles", meaning: "Abundance, prosperity, security, discipline, reliable" },
 ];
 
-const CARD_IMAGES = {
-  "The Fool":"https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-  "The Magician":"https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-  "The High Priestess":"https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
-  "The Empress":"https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
-  "The Emperor":"https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
-  "The Hierophant":"https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
-  "The Lovers":"https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
-  "The Chariot":"https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
-  "Strength":"https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
-  "The Hermit":"https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
-  "Wheel of Fortune":"https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
-  "Justice":"https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
-  "The Hanged Man":"https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
-  "Death":"https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
-  "Temperance":"https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
-  "The Devil":"https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
-  "The Tower":"https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
-  "The Star":"https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
-  "The Moon":"https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
-  "The Sun":"https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
-  "Judgement":"https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
-  "The World":"https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg",
-  "Ace of Wands":"https://upload.wikimedia.org/wikipedia/commons/1/11/Wands01.jpg",
-  "Two of Wands":"https://upload.wikimedia.org/wikipedia/commons/0/0f/Wands02.jpg",
-  "Three of Wands":"https://upload.wikimedia.org/wikipedia/commons/f/ff/Wands03.jpg",
-  "Four of Wands":"https://upload.wikimedia.org/wikipedia/commons/a/a4/Wands04.jpg",
-  "Five of Wands":"https://upload.wikimedia.org/wikipedia/commons/9/9d/Wands05.jpg",
-  "Six of Wands":"https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg",
-  "Seven of Wands":"https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg",
-  "Eight of Wands":"https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg",
-  "Nine of Wands":"https://upload.wikimedia.org/wikipedia/commons/4/4d/Tarot_Nine_of_Wands.jpg",
-  "Ten of Wands":"https://upload.wikimedia.org/wikipedia/commons/0/0b/Wands10.jpg",
-  "Page of Wands":"https://upload.wikimedia.org/wikipedia/commons/6/6a/Wands11.jpg",
-  "Knight of Wands":"https://upload.wikimedia.org/wikipedia/commons/1/16/Wands12.jpg",
-  "Queen of Wands":"https://upload.wikimedia.org/wikipedia/commons/b/b0/Wands13.jpg",
-  "King of Wands":"https://upload.wikimedia.org/wikipedia/commons/c/ce/Wands14.jpg",
-  "Ace of Cups":"https://upload.wikimedia.org/wikipedia/commons/3/36/Cups01.jpg",
-  "Two of Cups":"https://upload.wikimedia.org/wikipedia/commons/f/f8/Cups02.jpg",
-  "Three of Cups":"https://upload.wikimedia.org/wikipedia/commons/7/7a/Cups03.jpg",
-  "Four of Cups":"https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg",
-  "Five of Cups":"https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg",
-  "Six of Cups":"https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg",
-  "Seven of Cups":"https://upload.wikimedia.org/wikipedia/commons/a/ae/Cups07.jpg",
-  "Eight of Cups":"https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg",
-  "Nine of Cups":"https://upload.wikimedia.org/wikipedia/commons/2/24/Cups09.jpg",
-  "Ten of Cups":"https://upload.wikimedia.org/wikipedia/commons/8/84/Cups10.jpg",
-  "Page of Cups":"https://upload.wikimedia.org/wikipedia/commons/a/ad/Cups11.jpg",
-  "Knight of Cups":"https://upload.wikimedia.org/wikipedia/commons/f/fa/Cups12.jpg",
-  "Queen of Cups":"https://upload.wikimedia.org/wikipedia/commons/6/62/Cups13.jpg",
-  "King of Cups":"https://upload.wikimedia.org/wikipedia/commons/0/04/Cups14.jpg",
-  "Ace of Swords":"https://upload.wikimedia.org/wikipedia/commons/1/1a/Swords01.jpg",
-  "Two of Swords":"https://upload.wikimedia.org/wikipedia/commons/9/9e/Swords02.jpg",
-  "Three of Swords":"https://upload.wikimedia.org/wikipedia/commons/0/02/Swords03.jpg",
-  "Four of Swords":"https://upload.wikimedia.org/wikipedia/commons/b/bf/Swords04.jpg",
-  "Five of Swords":"https://upload.wikimedia.org/wikipedia/commons/2/23/Swords05.jpg",
-  "Six of Swords":"https://upload.wikimedia.org/wikipedia/commons/2/29/Swords06.jpg",
-  "Seven of Swords":"https://upload.wikimedia.org/wikipedia/commons/3/34/Swords07.jpg",
-  "Eight of Swords":"https://upload.wikimedia.org/wikipedia/commons/a/a7/Swords08.jpg",
-  "Nine of Swords":"https://upload.wikimedia.org/wikipedia/commons/2/2f/Swords09.jpg",
-  "Ten of Swords":"https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords10.jpg",
-  "Page of Swords":"https://upload.wikimedia.org/wikipedia/commons/4/4c/Swords11.jpg",
-  "Knight of Swords":"https://upload.wikimedia.org/wikipedia/commons/b/b0/Swords12.jpg",
-  "Queen of Swords":"https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords13.jpg",
-  "King of Swords":"https://upload.wikimedia.org/wikipedia/commons/3/33/Swords14.jpg",
-  "Ace of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/f/fd/Pents01.jpg",
-  "Two of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/9/9f/Pents02.jpg",
-  "Three of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/4/42/Pents03.jpg",
-  "Four of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/3/35/Pents04.jpg",
-  "Five of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/9/96/Pents05.jpg",
-  "Six of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/a/a6/Pents06.jpg",
-  "Seven of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg",
-  "Eight of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg",
-  "Nine of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/f/f0/Pents09.jpg",
-  "Ten of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/4/42/Pents10.jpg",
-  "Page of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/e/ec/Pents11.jpg",
-  "Knight of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/d/d5/Pents12.jpg",
-  "Queen of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/8/88/Pents13.jpg",
-  "King of Pentacles":"https://upload.wikimedia.org/wikipedia/commons/1/1c/Pents14.jpg",
-};
-
-const TEMPLATES = {
+const TEMPLATES: Record<string, string[]> = {
   personal: ["How will my day go today?","What should I focus on to make progress?","What is blocking me right now?","What am I not seeing clearly?","How do I manage my current workload?"],
   team: ["What should be our sprint goal?","What risk are we currently ignoring?","How can we improve our flow this week?","What is the team not saying out loud?","Where is our bandwidth being misallocated?"],
 };
 const POSITIONS = ["Past","Present","Future"];
-const drawCards = (n: number) => [...CARDS].sort(() => Math.random() - 0.5).slice(0, n);
+const drawCards = (n: number): Card[] => [...CARDS].sort(() => Math.random() - 0.5).slice(0, n);
 
 const C = {
   adonis:    "#FBD217",
-  burgundy:  "#6B5B8E",   // replaced: deep lavender instead of burgundy
-  redViolet: "#9B89C4",   // replaced: soft mid-lavender instead of red violet
-  cardinal:  "#BF152C",   // unused but keeping for reference
+  burgundy:  "#6B5B8E",
+  redViolet: "#9B89C4",
   dingley:   "#657A42",
-  // Derived
   cream:     "#FEFAF2",
   paper:     "#FDF6E8",
   dingleyLight: "#EEF4E6",
-  lavLight:  "#F0EDF8",   // lavender tint for hover/bg moments
+  lavLight:  "#F0EDF8",
   text:      "#2a1f10",
   mutedText: "#6b5744",
 };
@@ -187,26 +106,33 @@ const C = {
 const fH = "'Playfair Display', Georgia, serif";
 const fB = "'Inter', 'Helvetica Neue', sans-serif";
 
-// little decorative doodle accents
 const Dots = ({ color }: { color: string }) => (
   <span style={{ letterSpacing: 3, color, fontSize: 10 }}>✦ ✦ ✦</span>
 );
 
+function SectionLabel({ children, color }: { children: React.ReactNode; color: string }) {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
+      <div style={{ width:16, height:16, borderRadius:"50%", background: color, opacity:0.3 }} />
+      <span style={{ fontSize:10, letterSpacing:4, textTransform:"uppercase", color, fontFamily:"'Inter',sans-serif", fontWeight:700 }}>{children}</span>
+    </div>
+  );
+}
+
 export default function AgileOracle() {
-  const [mode, setMode] = useState("personal");
-  const [question, setQuestion] = useState("");
-  const [spread, setSpread] = useState(1);
-  const [cards, setCards] = useState(null);
-  const [readings, setReadings] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [imgErrors, setImgErrors] = useState({});
-  const [copied, setCopied] = useState(false);
-  const [revealed, setRevealed] = useState([]);
-  const resultsRef = useRef(null);
+  const [mode, setMode] = useState<string>("personal");
+  const [question, setQuestion] = useState<string>("");
+  const [spread, setSpread] = useState<number>(1);
+  const [cards, setCards] = useState<Card[] | null>(null);
+  const [readings, setReadings] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
+  const [revealed, setRevealed] = useState<number[]>([]);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  const reset = () => { setCards(null); setReadings([]); setQuestion(""); setImgErrors({}); setCopied(false); setRevealed([]); };
+  const reset = () => { setCards(null); setReadings([]); setQuestion(""); setCopied(false); setRevealed([]); };
 
-  const getReading = async (card, position, q, m) => {
+  const getReading = async (card: Card, position: string, q: string, m: string): Promise<string> => {
     const posCtx = spread === 3 ? `This card occupies the "${position}" position in a Past / Present / Future spread.` : "";
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method:"POST", headers:{"Content-Type":"application/json"},
@@ -230,7 +156,7 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
 
   const doReading = async () => {
     if (!question.trim()) return;
-    setLoading(true); setCards(null); setReadings([]); setImgErrors({}); setCopied(false); setRevealed([]);
+    setLoading(true); setCards(null); setReadings([]); setCopied(false); setRevealed([]);
     const drawn = drawCards(spread);
     drawn.forEach((_, i) => setTimeout(() => setRevealed(r => [...r, i]), 200 + i * 380));
     setCards(drawn);
@@ -261,42 +187,30 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
         .chip:hover { border-color:${C.dingley} !important; background:${C.dingleyLight} !important; }
       `}</style>
 
-      {/* ── HERO ── */}
       <header style={{
         background: `linear-gradient(160deg, ${C.dingley} 0%, #7d9452 35%, #9fb86a 60%, #cfe0a8 82%, ${C.cream} 100%)`,
         padding: "0 0 60px",
         position: "relative",
         overflow: "hidden",
       }}>
-        {/* Decorative circles */}
-        {[{s:320,t:-80,r:-80,o:0.08},{s:200,t:40,r:60,o:0.06},{s:150,b:-40,l:40,o:0.07}].map((p,i)=>(
+        {([{s:320,t:-80,r:-80,o:0.08},{s:200,t:40,r:60,o:0.06},{s:150,b:-40,l:40,o:0.07}] as Array<{s:number,t?:number,r?:number,b?:number,l?:number,o:number}>).map((p,i)=>(
           <div key={i} style={{ position:"absolute", width:p.s, height:p.s, borderRadius:"50%", background:"white", opacity:p.o, top:p.t, right:p.r, bottom:p.b, left:p.l, pointerEvents:"none" }} />
         ))}
 
-        {/* Top bar */}
         <div style={{ padding:"14px 32px", display:"flex", justifyContent:"space-between", borderBottom:"1px solid rgba(255,255,255,0.25)" }}>
           <span style={{ fontSize:10, letterSpacing:4, textTransform:"uppercase", color:"rgba(255,255,255,0.8)", fontFamily: fB }}>Est. 2026 · Alyssa Layden</span>
           <span style={{ fontSize:10, letterSpacing:4, textTransform:"uppercase", color:"rgba(255,255,255,0.8)", fontFamily: fB }}>Inspect &amp; Adapt</span>
         </div>
 
         <div style={{ maxWidth:800, margin:"0 auto", padding:"52px 32px 0", textAlign:"center" }}>
-          {/* Badge */}
           <div style={{ display:"inline-block", background: C.adonis, color: C.text, fontSize:10, letterSpacing:4, textTransform:"uppercase", fontWeight:700, padding:"6px 18px", borderRadius:20, marginBottom:28, fontFamily: fB }}>
             ✦ The Official Journal of Agile Signal Detection ✦
           </div>
-
-          {/* Big title */}
-          <h1 style={{
-            margin:"0 0 20px",
-            fontFamily: fH,
-            fontSize:"clamp(56px,10vw,104px)",
-            fontWeight:900, lineHeight:0.9, letterSpacing:"-1px",
-          }}>
+          <h1 style={{ margin:"0 0 20px", fontFamily: fH, fontSize:"clamp(56px,10vw,104px)", fontWeight:900, lineHeight:0.9, letterSpacing:"-1px" }}>
             <span style={{ color:"white", display:"block" }}>THE</span>
             <span style={{ color:"white", fontStyle:"italic", display:"block" }}>AGILE</span>
             <span style={{ color:"white", display:"block" }}>ORACLE</span>
           </h1>
-
           <div style={{ margin:"20px auto 0", maxWidth:500 }}>
             <Dots color="rgba(255,255,255,0.6)" />
             <p style={{ margin:"16px 0 0", fontSize:16, lineHeight:1.8, color:"rgba(255,255,255,0.9)", fontFamily: fH, fontStyle:"italic" }}>
@@ -305,23 +219,18 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
           </div>
         </div>
 
-        {/* Wavy bottom */}
         <svg viewBox="0 0 1440 60" style={{ position:"absolute", bottom:0, left:0, width:"100%", display:"block" }} preserveAspectRatio="none">
           <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill={C.cream} />
         </svg>
       </header>
 
-      {/* ── MAIN ── */}
       <main style={{ maxWidth:800, margin:"0 auto", padding:"48px 24px 80px" }}>
-
-        {/* Input card */}
         <div style={{ background: C.paper, border:`2px solid ${C.dingleyLight}`, borderRadius:20, padding:"36px 32px", marginBottom:32, boxShadow:"0 4px 24px rgba(101,122,66,0.1)" }}>
 
-          {/* Mode */}
           <div style={{ marginBottom:28 }}>
             <SectionLabel color={C.dingley}>Reading Mode</SectionLabel>
             <div style={{ display:"flex", gap:8 }}>
-              {[["personal","🌿 Personal"],["team","🌱 Team / Agile"]].map(([val,label])=>(
+              {([["personal","🌿 Personal"],["team","🌱 Team / Agile"]] as [string,string][]).map(([val,label])=>(
                 <button key={val} onClick={()=>{setMode(val);setQuestion("");}} style={{
                   flex:1, padding:"12px 0", borderRadius:12,
                   border:`2px solid ${mode===val ? C.dingley : "rgba(101,122,66,0.25)"}`,
@@ -334,11 +243,10 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
             </div>
           </div>
 
-          {/* Templates */}
           <div style={{ marginBottom:28 }}>
             <SectionLabel color={C.dingley}>Suggested Inquiries</SectionLabel>
             <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-              {TEMPLATES[mode].map(t=>(
+              {TEMPLATES[mode].map((t: string)=>(
                 <button key={t} className="chip" onClick={()=>setQuestion(t)} style={{
                   padding:"7px 14px", borderRadius:20,
                   border:`1.5px solid ${question===t ? C.dingley : "rgba(101,122,66,0.3)"}`,
@@ -351,7 +259,6 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
             </div>
           </div>
 
-          {/* Question */}
           <div style={{ marginBottom:28 }}>
             <SectionLabel color={C.dingley}>Your Inquiry</SectionLabel>
             <textarea value={question} onChange={e=>setQuestion(e.target.value)}
@@ -364,11 +271,11 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
               }} />
           </div>
 
-          {/* Spread */}
           <div style={{ marginBottom:28 }}>
             <SectionLabel color={C.dingley}>Spread</SectionLabel>
             <div style={{ display:"flex", gap:8 }}>
-            {([[1,"🃏 Single Card"],[3,"🌙 Past · Present · Future"]] as [number,string][]).map(([n,label])=>(                <button key={n} onClick={()=>setSpread(n)} style={{
+              {([[1,"🃏 Single Card"],[3,"🌙 Past · Present · Future"]] as [number,string][]).map(([n,label])=>(
+                <button key={n} onClick={()=>setSpread(n)} style={{
                   flex:1, padding:"12px 0", borderRadius:12,
                   border:`2px solid ${spread===n ? C.dingley : "rgba(101,122,66,0.25)"}`,
                   background: spread===n ? C.dingley : "white",
@@ -380,7 +287,6 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
             </div>
           </div>
 
-          {/* CTA */}
           <button onClick={doReading} disabled={loading || !question.trim()} style={{
             width:"100%", padding:"18px", borderRadius:14,
             background: loading || !question.trim() ? C.lavLight : C.redViolet,
@@ -396,7 +302,6 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
           </button>
         </div>
 
-        {/* ── RESULTS ── */}
         {cards && (
           <div ref={resultsRef}>
             <div style={{ textAlign:"center", marginBottom:36 }}>
@@ -428,13 +333,11 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
                   )}
 
                   <div style={{ display:"flex", gap:28, alignItems:"flex-start", flexWrap:"wrap" }}>
-                    {/* Card placeholder */}
                     <div style={{ flexShrink:0, width:140, minHeight:200, borderRadius:12, background: C.dingleyLight, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:`0 0 0 2px ${C.dingley}, 6px 6px 0 ${C.adonis}`, padding:"20px 12px", textAlign:"center" }}>
                       <div style={{ fontSize:28, marginBottom:10 }}>✦</div>
                       <div style={{ fontSize:13, fontFamily: fH, fontWeight:700, color: C.dingley, lineHeight:1.3, fontStyle:"italic" }}>{card.name}</div>
                     </div>
 
-                    {/* Text */}
                     <div style={{ flex:1, minWidth:200 }}>
                       <h3 style={{ margin:"0 0 4px", fontFamily: fH, fontSize:28, fontWeight:900, color: C.redViolet, lineHeight:1.1 }}>
                         {card.name}
@@ -462,7 +365,7 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
               ))}
             </div>
 
-            {readings.length === (cards?.length||0) && (
+            {readings.length === (cards?.length || 0) && (
               <div style={{ marginTop:24, display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
                 <button onClick={copyForSlack} style={{
                   padding:"12px 28px", borderRadius:10,
@@ -491,15 +394,6 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
           <div style={{ fontSize:10, letterSpacing:3, textTransform:"uppercase", color: C.dingley, marginTop:6, fontFamily: fB }}>Inspect · Adapt · Eliminate Waste</div>
         </footer>
       </main>
-    </div>
-  );
-}
-
-function SectionLabel({ children, color }: { children: React.ReactNode; color: string }) {
-  return (
-    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
-      <div style={{ width:16, height:16, borderRadius:"50%", background: color, opacity:0.3 }} />
-      <span style={{ fontSize:10, letterSpacing:4, textTransform:"uppercase", color, fontFamily:"'Inter',sans-serif", fontWeight:700 }}>{children}</span>
     </div>
   );
 }
