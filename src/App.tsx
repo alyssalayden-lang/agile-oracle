@@ -429,19 +429,10 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
                   )}
 
                   <div style={{ display:"flex", gap:28, alignItems:"flex-start", flexWrap:"wrap" }}>
-                    {/* Card image */}
-                    <div style={{ flexShrink:0 }}>
-                      {!imgErrors[i] && CARD_IMAGES[card.name] ? (
-                        <div style={{ borderRadius:12, overflow:"hidden", border:`3px solid white`, boxShadow:`0 0 0 2px ${C.dingley}, 6px 6px 0 ${C.adonis}`, width:140 }}>
-                          <img src={CARD_IMAGES[card.name]} alt={card.name}
-                            onError={()=>setImgErrors(e=>({...e,[i]:true}))}
-                            style={{ width:140, display:"block" }} />
-                        </div>
-                      ) : (
-                        <div style={{ width:140, height:226, borderRadius:12, background: C.dingleyLight, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 0 0 2px ${C.dingley}, 6px 6px 0 ${C.adonis}` }}>
-                          <span style={{ fontSize:40, color: C.dingley }}>✦</span>
-                        </div>
-                      )}
+                    {/* Card placeholder */}
+                    <div style={{ flexShrink:0, width:140, minHeight:200, borderRadius:12, background: C.dingleyLight, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", boxShadow:`0 0 0 2px ${C.dingley}, 6px 6px 0 ${C.adonis}`, padding:"20px 12px", textAlign:"center" }}>
+                      <div style={{ fontSize:28, marginBottom:10 }}>✦</div>
+                      <div style={{ fontSize:13, fontFamily: fH, fontWeight:700, color: C.dingley, lineHeight:1.3, fontStyle:"italic" }}>{card.name}</div>
                     </div>
 
                     {/* Text */}
