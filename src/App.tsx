@@ -368,8 +368,7 @@ ${m === "team" ? "TEAM MODE: sprint health, team dynamics, WIP, impediment remov
           <div style={{ marginBottom:28 }}>
             <SectionLabel color={C.dingley}>Spread</SectionLabel>
             <div style={{ display:"flex", gap:8 }}>
-              {[[1,"🃏 Single Card"],[3,"🌙 Past · Present · Future"]].map(([n,label])=>(
-                <button key={n} onClick={()=>setSpread(n)} style={{
+            {([[1,"🃏 Single Card"],[3,"🌙 Past · Present · Future"]] as [number,string][]).map(([n,label])=>(                <button key={n} onClick={()=>setSpread(n)} style={{
                   flex:1, padding:"12px 0", borderRadius:12,
                   border:`2px solid ${spread===n ? C.dingley : "rgba(101,122,66,0.25)"}`,
                   background: spread===n ? C.dingley : "white",
